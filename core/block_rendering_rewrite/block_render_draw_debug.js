@@ -164,7 +164,9 @@ Blockly.BlockRendering.Debug.prototype.drawConnection = function(conn) {
 };
 
 /**
- * Draw a debug rectangle for a non-empty row.
+ * Draw a debug rectangle for a non-empty row,
+ * while adding an aria-label to the row containing a description of all
+ * subelements/fields of the row.
  * @param {!Blockly.BlockSvg.Row} row The non-empty row to render.
  * @param {number} cursorY The y position of the top of the row.
  * @package
@@ -177,6 +179,7 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedRow = function(row, cursorY) 
         'y': cursorY ,
         'width': row.width,
         'height': row.height,
+        'aria-label': this.grabDesc(row),
       },
       this.svgRoot_));
 };
@@ -232,4 +235,55 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
   if (block.outputConnection) {
     this.drawConnection(block.outputConnection);
   }
+};
+
+/**
+ * Draw a debug rectangle for the bottom spacer row.
+ * @param {!Blockly.BlockRendering.Row} row The row to render
+ * @param {number} cursorY The y position of the top of the row.
+ * @package
+ */
+Blockly.BlockRendering.Debug.prototype.drawBottomRow = function(row, cursorY) {
+  this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+      {
+        'class': 'rowSpacerRect blockRenderDebug',
+        'x': 0,
+        'y': cursorY,
+        'width': row.width,
+        'height': row.height,
+        'aria-label': 'End of block.',
+      },
+      this.svgRoot_));
+};
+
+
+/**
+ * Construct the descriotion of a row.
+ * @param {!Blockly.BlockRendering.Row} row the row to grab description fromXml
+ * @package
+ */
+Blockly.BlockRendering.Debug.prototype.grabDesc = function(row){
+  var desc = '';
+  for(var i = 0; i < row.elements.length; i++){
+    switch (row.elements[i].type) {
+      case 'field':
+        if(row.elements[i].field.textElement_ != null)
+        desc += row.elements[i].field.textElement_.textContent + '. ';
+        break;
+      case 'icon':
+        desc += 'modifier icon. ';
+        break;
+      case 'external value input':
+        desc += row.elements[i].connectedBlock == null? 'external value input. ':row.elements[i].connectedBlock.type + '. ';
+        break;
+      case 'inline input':
+        desc += row.elements[i].connectedBlock == null? 'inline input. ':row.elements[i].connectedBlock.type + '. ';
+        break;
+      case 'statement input':
+        desc += 'statement. ';
+        break;
+      default:
+    }
+  }
+  return desc;
 };

@@ -121,7 +121,8 @@ Blockly.FieldImage.prototype.initView = function() {
       {
         'height': this.height_ + 'px',
         'width': this.width_ + 'px',
-        'alt': this.text_
+        'alt': this.text_,
+        'aria-hidden': true
       },
       this.fieldGroup_);
   this.imageElement_.setAttributeNS('http://www.w3.org/1999/xlink',
