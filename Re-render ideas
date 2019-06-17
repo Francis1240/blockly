@@ -1,0 +1,35 @@
+
+
+
+
+
+<g data-id="abc123"> ...nested block... </g>
+...
+<rect data-ordered-before="abc123"></rect>
+
+
+
+
+
+var pendingChildReorderings = [];
+
+// gets called a lot
+function onDOMChange(event) {
+  if (pendingChildReorderings.length == 0) {
+    setTimeout(reorderChildren, 0);
+  }
+  if (event.element is a thing that needs its children ordered) {
+    pendingChildReorderings.push(event.element)  // and maybe make it unique
+  }
+}
+
+function reorderChildren() {
+  disable onDOMChange
+
+  for each elem in pendingChildReorderings {
+    // reorder children
+  }
+  pendingChildReorderings = [];
+
+  enable onDOMChange
+}
