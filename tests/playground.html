@@ -411,6 +411,8 @@ var spaghettiXml = [
   '    <next></next>',
   '  </block>'].join('\n');
 
+
+
 </script>
 
 <style>
@@ -1523,3 +1525,27 @@ h1 {
   </xml>
 </body>
 </html>
+<script>
+function rearrangeDOM(){
+
+}
+
+function setObserver(){
+  console.log('setting observer!');
+  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+  var observer = new MutationObserver(function(mutations){
+    mutations.forEach(function(mutation) {
+      console.log('DOM Changed!');
+      rearrangeDOM();
+    });
+  });
+  setTimeout(observer.observe(document.getElementById('blocklyDiv'), {
+    attributes: false,
+    childList: true,
+    characterData: false,
+    subtree: true
+  }),0);
+}
+
+setObserver();
+</script>
