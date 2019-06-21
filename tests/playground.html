@@ -158,7 +158,8 @@ function reorderDOM() {
 }
 
 function sortChildrenByNavigationOrder(parent) {
-  let navOrder = (elem) => parseFloat(elem.getAttribute("data-navigation-order") || "Infinity")
+  let navOrder = (elem) => parseFloat(elem.getAttribute("data-navigation-order") || "Infinity");
+  
   let newChildren = [...parent.children]
     .sort((e0, e1) => navOrder(e0) < navOrder(e1) ? -1 : 1);
   newChildren

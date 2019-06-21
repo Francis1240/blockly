@@ -67,7 +67,7 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
    * @private
    */
   this.svgPathDark_ = Blockly.utils.createSvgElement('path',
-      {'class': 'blocklyPathDark', 'transform': 'translate(1,1)'},
+      {'class': 'blocklyPathDark', 'transform': 'translate(1,1)', 'aria-hidden': true, 'data-navigation-order': -1},
       this.svgGroup_);
 
   /**
@@ -75,14 +75,14 @@ Blockly.BlockSvg = function(workspace, prototypeName, opt_id) {
    * @private
    */
   this.svgPath_ = Blockly.utils.createSvgElement('path',
-      {'class': 'blocklyPath'}, this.svgGroup_);
+      {'class': 'blocklyPath', 'aria-hidden': true, 'data-navigation-order': -1}, this.svgGroup_);
 
   /**
    * @type {SVGElement}
    * @private
    */
   this.svgPathLight_ = Blockly.utils.createSvgElement('path',
-      {'class': 'blocklyPathLight'}, this.svgGroup_);
+      {'class': 'blocklyPathLight', 'aria-hidden': true, 'data-navigation-order': -1}, this.svgGroup_);
   this.svgPath_.tooltip = this;
 
   /** @type {boolean} */

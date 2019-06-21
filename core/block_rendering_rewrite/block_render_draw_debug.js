@@ -88,15 +88,15 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerRow = function(row, cursorY) {
  */
 Blockly.BlockRendering.Debug.prototype.drawSpacerElem = function(elem, cursorX, centerY) {
   var yPos = centerY - elem.height / 2;
-  this.debugElements_.push(Blockly.utils.createSvgElement('rect',
-      {
-        'class': 'elemSpacerRect blockRenderDebug',
-        'x': cursorX,
-        'y': yPos,
-        'width': elem.width,
-        'height': 15,
-      },
-      this.svgRoot_));
+  // this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+  //     {
+  //       'class': 'elemSpacerRect blockRenderDebug',
+  //       'x': cursorX,
+  //       'y': yPos,
+  //       'width': elem.width,
+  //       'height': 15,
+  //     },
+  //     this.svgRoot_));
 };
 
 /**
@@ -108,15 +108,15 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerElem = function(elem, cursorX, 
  */
 Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY) {
   var yPos = centerY - elem.height / 2;
-  this.debugElements_.push(Blockly.utils.createSvgElement('rect',
-      {
-        'class': 'rowRenderingRect blockRenderDebug',
-        'x': cursorX,
-        'y': yPos,
-        'width': elem.width,
-        'height': elem.height ,
-      },
-      this.svgRoot_));
+  // this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+  //     {
+  //       'class': 'rowRenderingRect blockRenderDebug',
+  //       'x': cursorX,
+  //       'y': yPos,
+  //       'width': elem.width,
+  //       'height': elem.height ,
+  //     },
+  //     this.svgRoot_));
 
   if (elem.isInput) {
     this.drawConnection(elem.connection);
@@ -221,7 +221,10 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
   var cursorY = 0;
   for (var r = 0; r < info.rows.length; r++) {
     var row = info.rows[r];
-    if (row.isSpacer()) {
+    if(r == info.rows.length-1){
+      this.drawBottomRow(row, cursorY);
+    }
+    else if (row.isSpacer()) {
       this.drawSpacerRow(row, cursorY);
     } else {
       for (var c = 0; c < row.elements.length; c++) {

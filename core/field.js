@@ -284,7 +284,8 @@ Blockly.Field.prototype.createTextElement_ = function() {
   this.textElement_ = Blockly.utils.createSvgElement('text',
       {
         'class': 'blocklyText',
-        'y': this.size_.height - 12.5
+        'y': this.size_.height - 12.5,
+        'aria-hidden': true
       }, this.fieldGroup_);
   this.textContent_ = document.createTextNode('');
   this.textElement_.appendChild(this.textContent_);
