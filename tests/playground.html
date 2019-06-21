@@ -148,6 +148,43 @@ function start() {
 
   fromXml();
 }
+var pendingDOMReorderings = new Set();
+function reorderDOM() {
+  console.log("DOM changed", pendingDOMReorderings.size);
+  observer.disconnect();
+  pendingDOMReorderings.forEach(sortChildrenByNavigationOrder);
+  pendingDOMReorderings = new Set();
+  connectObserver();
+}
+
+function sortChildrenByNavigationOrder(parent) {
+  let navOrder = (elem) => parseFloat(elem.getAttribute("data-navigation-order") || "Infinity")
+  let newChildren = [...parent.children]
+    .sort((e0, e1) => navOrder(e0) < navOrder(e1) ? -1 : 1);
+  newChildren
+    .forEach((elem) => parent.appendChild(elem));
+  console.log(newChildren.map(navOrder))
+}
+
+var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
+var observer = new MutationObserver(function(mutations){
+  mutations.forEach(function(mutation) {
+    if(!mutation.target.getAttribute("data-id")){
+      return;
+    }
+    if(Object.entries(pendingDOMReorderings).length === 0) {
+      setTimeout(reorderDOM, 0);
+    }
+    pendingDOMReorderings.add(mutation.target);
+  });
+});
+function connectObserver() {
+  observer.observe(document.getElementById("blocklyDiv"), {
+    childList: true,
+    subtree: true,
+  });
+}
+window.addEventListener('DOMContentLoaded', connectObserver);
 
 function addToolboxButtonCallbacks() {
   var addAllBlocksToWorkspace = function(button) {
@@ -286,12 +323,11 @@ function toXml() {
   var output = document.getElementById('importExport');
   var xml = Blockly.Xml.workspaceToDom(workspace);
   output.value = Blockly.Xml.domToPrettyText(xml);
-  output.focus();
-  output.select();
-  taChange();
+  return output.value;
 }
 
 function fromXml() {
+  workspace.clear();
   var input = document.getElementById('importExport');
   var xml = Blockly.Xml.textToDom(input.value);
   Blockly.Xml.domToWorkspace(xml, workspace);
@@ -349,7 +385,6 @@ function toggleRenderingDebug(state) {
 function logger(e) {
   console.log(e);
 }
-
 function airstrike(n) {
   var prototypes = [];
   var toolbox = getToolboxElement();
@@ -534,7 +569,7 @@ h1 {
     <input type="button" value="Spaghetti!" onclick="spaghetti(8)">
   </p>
   <p>
-    Log events: &nbsp;
+    Event Listener: &nbsp;
     <input type="checkbox" onclick="logEvents(this.checked)" id="logCheck">
   </p>
 
@@ -1525,27 +1560,3 @@ h1 {
   </xml>
 </body>
 </html>
-<script>
-function rearrangeDOM(){
-
-}
-
-function setObserver(){
-  console.log('setting observer!');
-  var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
-  var observer = new MutationObserver(function(mutations){
-    mutations.forEach(function(mutation) {
-      console.log('DOM Changed!');
-      rearrangeDOM();
-    });
-  });
-  setTimeout(observer.observe(document.getElementById('blocklyDiv'), {
-    attributes: false,
-    childList: true,
-    characterData: false,
-    subtree: true
-  }),0);
-}
-
-setObserver();
-</script>

@@ -169,9 +169,10 @@ Blockly.BlockRendering.Debug.prototype.drawConnection = function(conn) {
  * subelements/fields of the row.
  * @param {!Blockly.BlockSvg.Row} row The non-empty row to render.
  * @param {number} cursorY The y position of the top of the row.
+ * @param {number}
  * @package
  */
-Blockly.BlockRendering.Debug.prototype.drawRenderedRow = function(row, cursorY) {
+Blockly.BlockRendering.Debug.prototype.drawRenderedRow = function(row, cursorY, rowNum) {
   this.debugElements_.push(Blockly.utils.createSvgElement('rect',
       {
         'class': 'elemRenderingRect blockRenderDebug',
@@ -180,6 +181,7 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedRow = function(row, cursorY) 
         'width': row.width,
         'height': row.height,
         'aria-label': this.grabDesc(row),
+        'data-navigation-order': 1000*rowNum,
       },
       this.svgRoot_));
 };
@@ -188,9 +190,10 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedRow = function(row, cursorY) 
  * Draw debug rectangles for a non-empty row and all of its subcomponents.
  * @param {!Blockly.BlockSvg.Row} row The non-empty row to render.
  * @param {number} cursorY The y position of the top of the row.
+ * @param {number} rowNum The y-index of the row to render.
  * @package
  */
-Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, cursorY) {
+Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, cursorY, rowNum) {
   var centerY = cursorY + row.height / 2;
   var cursorX = 0;
   for (var e = 0; e < row.elements.length; e++) {
@@ -202,7 +205,7 @@ Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, curso
     }
     cursorX += elem.width;
   }
-  this.drawRenderedRow(row, cursorY);
+  this.drawRenderedRow(row, cursorY, rowNum);
 };
 
 /**
@@ -221,7 +224,14 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
     if (row.isSpacer()) {
       this.drawSpacerRow(row, cursorY);
     } else {
-      this.drawRowWithElements(row, cursorY);
+      for (var c = 0; c < row.elements.length; c++) {
+        var rowChild = row.elements[c];
+        if (rowChild.connection && rowChild.connection.targetConnection) {
+          console.log(rowChild.connection.targetConnection.sourceBlock_);
+          rowChild.connection.targetConnection.sourceBlock_.svgGroup_.setAttribute("data-navigation-order", 1000*r+c);
+        }
+      }
+      this.drawRowWithElements(row, cursorY, r);
     }
     cursorY += row.height;
   }
