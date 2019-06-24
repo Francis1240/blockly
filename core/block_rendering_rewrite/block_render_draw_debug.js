@@ -108,15 +108,18 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerElem = function(elem, cursorX, 
  */
 Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY) {
   var yPos = centerY - elem.height / 2;
-  // this.debugElements_.push(Blockly.utils.createSvgElement('rect',
-  //     {
-  //       'class': 'rowRenderingRect blockRenderDebug',
-  //       'x': cursorX,
-  //       'y': yPos,
-  //       'width': elem.width,
-  //       'height': elem.height ,
-  //     },
-  //     this.svgRoot_));
+  if(elem.field instanceof Blockly.FieldVariable){
+    this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+       {
+         'class': 'rowRenderingRect blockRenderDebug',
+         'x': cursorX,
+         'y': yPos,
+         'width': elem.width,
+         'height': elem.height,
+         'aira-label': elem.field.textContent_.textContent,
+       },
+       this.svgRoot_));
+  }
 
   if (elem.isInput) {
     this.drawConnection(elem.connection);
@@ -218,10 +221,11 @@ Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, curso
 Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
   this.clearElems();
   this.svgRoot_ = block.getSvgRoot();
+  console.log(info);
   var cursorY = 0;
   for (var r = 0; r < info.rows.length; r++) {
     var row = info.rows[r];
-    if(r == info.rows.length-1){
+    if(r == info.rows.length-1 && info.bottomRow.hasNextConnection == true){
       this.drawBottomRow(row, cursorY);
     }
     else if (row.isSpacer()) {
@@ -229,9 +233,12 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
     } else {
       for (var c = 0; c < row.elements.length; c++) {
         var rowChild = row.elements[c];
-        if (rowChild.connection && rowChild.connection.targetConnection) {
-          console.log(rowChild.connection.targetConnection.sourceBlock_);
+        if ((rowChild.connection && rowChild.connection.targetConnection)) {
           rowChild.connection.targetConnection.sourceBlock_.svgGroup_.setAttribute("data-navigation-order", 1000*r+c);
+        }
+        else if(rowChild.field instanceof Blockly.FieldVariable){
+          rowChild.field.fieldGroup_.setAttribute("data-navigation-order", 1000*r+c);
+          rowChild.field.fieldGroup_.setAttribute("aria-label", rowChild.field.text_ +'. ');
         }
       }
       this.drawRowWithElements(row, cursorY, r);
@@ -265,6 +272,7 @@ Blockly.BlockRendering.Debug.prototype.drawBottomRow = function(row, cursorY) {
         'width': row.width,
         'height': row.height,
         'aria-label': 'End of block.',
+        'data-navigation-order': 9999999,
       },
       this.svgRoot_));
 };

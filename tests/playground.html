@@ -150,7 +150,6 @@ function start() {
 }
 var pendingDOMReorderings = new Set();
 function reorderDOM() {
-  console.log("DOM changed", pendingDOMReorderings.size);
   observer.disconnect();
   pendingDOMReorderings.forEach(sortChildrenByNavigationOrder);
   pendingDOMReorderings = new Set();
@@ -159,12 +158,11 @@ function reorderDOM() {
 
 function sortChildrenByNavigationOrder(parent) {
   let navOrder = (elem) => parseFloat(elem.getAttribute("data-navigation-order") || "Infinity");
-  
+
   let newChildren = [...parent.children]
     .sort((e0, e1) => navOrder(e0) < navOrder(e1) ? -1 : 1);
   newChildren
     .forEach((elem) => parent.appendChild(elem));
-  console.log(newChildren.map(navOrder))
 }
 
 var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;

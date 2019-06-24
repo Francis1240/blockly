@@ -240,7 +240,7 @@ Blockly.Bubble.prototype.createDom_ = function(content, hasResize) {
         'x': 0,
         'y': 0,
         'rx': Blockly.Bubble.BORDER_WIDTH,
-        'ry': Blockly.Bubble.BORDER_WIDTH
+        'ry': Blockly.Bubble.BORDER_WIDTH,
       },
       bubbleEmboss);
   if (hasResize) {
