@@ -204,7 +204,7 @@ Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, curso
     if (elem.isSpacer()) {
       this.drawSpacerElem(elem, cursorX, centerY);
     } else {
-      this.drawRenderedElem(elem, cursorX, centerY);
+      this.drawRenderedElem(elem, cursorX, centerY); console.log(elem);
     }
     cursorX += elem.width;
   }
@@ -221,24 +221,40 @@ Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, curso
 Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
   this.clearElems();
   this.svgRoot_ = block.getSvgRoot();
-  console.log(info);
   var cursorY = 0;
   for (var r = 0; r < info.rows.length; r++) {
     var row = info.rows[r];
-    if(r == info.rows.length-1 && info.bottomRow.hasNextConnection == true){
-      this.drawBottomRow(row, cursorY);
+    if (r == 0 && (block.type == "math_arithmetic" || block.type == "logic_operation")){
+      console.log(block);
+      this.drawLeftParenthesis(row, cursorY);
+    }
+    else if (r == info.rows.length-1 ){
+      if (block.type == "math_arithmetic" || block.type == "logic_operation") {
+        this.drawRightParenthesis(row, cursorY);
+      }
+      else if (info.bottomRow.hasNextConnection == true){
+        this.drawBottomRow(row, cursorY);
+      }
+      else{
+        this.drawSpacerRow(row, cursorY);
+      }
     }
     else if (row.isSpacer()) {
       this.drawSpacerRow(row, cursorY);
-    } else {
+    }
+    else {
       for (var c = 0; c < row.elements.length; c++) {
         var rowChild = row.elements[c];
-        if ((rowChild.connection && rowChild.connection.targetConnection)) {
+        if (rowChild.connection && rowChild.connection.targetConnection) {
           rowChild.connection.targetConnection.sourceBlock_.svgGroup_.setAttribute("data-navigation-order", 1000*r+c);
         }
-        else if(rowChild.field instanceof Blockly.FieldVariable){
+        else if (rowChild.field instanceof Blockly.FieldVariable){
           rowChild.field.fieldGroup_.setAttribute("data-navigation-order", 1000*r+c);
           rowChild.field.fieldGroup_.setAttribute("aria-label", rowChild.field.text_ +'. ');
+        }
+        else if (rowChild instanceof Blockly.BlockRendering.Icon){
+          rowChild.icon.iconGroup_.setAttribute("data-navigation-order", 1000*r+c);
+          rowChild.icon.iconGroup_.setAttribute("aria-label", 'Modifier. ');
         }
       }
       this.drawRowWithElements(row, cursorY, r);
@@ -255,6 +271,46 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
   if (block.outputConnection) {
     this.drawConnection(block.outputConnection);
   }
+};
+
+/**
+ * Draw a debug rectangle for the top spacer row with label 'left parenthesis. '.
+ * @param {!Blockly.BlockRendering.Row} row The row to render
+ * @param {number} cursorY The y position of the top of the row.
+ * @package
+ */
+Blockly.BlockRendering.Debug.prototype.drawLeftParenthesis = function(row, cursorY) {
+  this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+      {
+        'class': 'rowSpacerRect blockRenderDebug',
+        'x': 0,
+        'y': cursorY,
+        'width': row.width,
+        'height': row.height,
+        'aria-label': 'left parenthesis. ',
+        'data-navigation-order': 0,
+      },
+      this.svgRoot_));
+};
+
+/**
+ * Draw a debug rectangle for the bottom spacer row with label 'right parenthesis. '.
+ * @param {!Blockly.BlockRendering.Row} row The row to render
+ * @param {number} cursorY The y position of the top of the row.
+ * @package
+ */
+Blockly.BlockRendering.Debug.prototype.drawRightParenthesis = function(row, cursorY) {
+  this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+      {
+        'class': 'rowSpacerRect blockRenderDebug',
+        'x': 0,
+        'y': cursorY,
+        'width': row.width,
+        'height': row.height,
+        'aria-label': 'Right Parenthesis. ',
+        'data-navigation-order': 9999999,
+      },
+      this.svgRoot_));
 };
 
 /**
@@ -295,10 +351,10 @@ Blockly.BlockRendering.Debug.prototype.grabDesc = function(row){
         desc += 'modifier icon. ';
         break;
       case 'external value input':
-        desc += row.elements[i].connectedBlock == null? 'external value input. ':row.elements[i].connectedBlock.type + '. ';
+        desc += row.elements[i].connectedBlock == null? 'blank. ':/*row.elements[i].connectedBlock.type + '. '*/'';
         break;
       case 'inline input':
-        desc += row.elements[i].connectedBlock == null? 'inline input. ':row.elements[i].connectedBlock.type + '. ';
+        desc += row.elements[i].connectedBlock == null? 'blank. ':/*row.elements[i].connectedBlock.type + '. '*/'';
         break;
       case 'statement input':
         desc += 'statement. ';
