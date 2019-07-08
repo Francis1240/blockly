@@ -116,7 +116,6 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
          'y': yPos,
          'width': elem.width,
          'height': elem.height,
-         'aira-label': elem.field.textContent_.textContent,
        },
        this.svgRoot_));
   }
@@ -250,7 +249,7 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
         }
         else if (rowChild.field instanceof Blockly.FieldVariable){
           rowChild.field.fieldGroup_.setAttribute("data-navigation-order", 1000*r+c);
-          rowChild.field.fieldGroup_.setAttribute("aria-label", rowChild.field.text_ +'. ');
+          rowChild.field.fieldGroup_.setAttribute("aria-label", 'editable droplist. '+rowChild.field.text_ +'. ');
         }
         else if (rowChild instanceof Blockly.BlockRendering.Icon){
           rowChild.icon.iconGroup_.setAttribute("data-navigation-order", 1000*r+c);
@@ -345,7 +344,7 @@ Blockly.BlockRendering.Debug.prototype.grabDesc = function(row){
     switch (row.elements[i].type) {
       case 'field':
         if(row.elements[i].field.textElement_ != null)
-        desc += row.elements[i].field.textElement_.textContent + '. ';
+        desc += 'editable text.' + row.elements[i].field.textElement_.textContent + '. ';
         break;
       case 'icon':
         desc += 'modifier icon. ';
