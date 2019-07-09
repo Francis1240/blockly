@@ -203,7 +203,7 @@ Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, curso
     if (elem.isSpacer()) {
       this.drawSpacerElem(elem, cursorX, centerY);
     } else {
-      this.drawRenderedElem(elem, cursorX, centerY); console.log(elem);
+      this.drawRenderedElem(elem, cursorX, centerY);
     }
     cursorX += elem.width;
   }
@@ -224,15 +224,14 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
   for (var r = 0; r < info.rows.length; r++) {
     var row = info.rows[r];
     if (r == 0 && (block.type == "math_arithmetic" || block.type == "logic_operation")){
-      console.log(block);
       this.drawLeftParenthesis(row, cursorY);
+    }
+    else if (row.hasNextConnection){
+      this.drawBottomRow(row, cursorY, this.getNestingBlockName(block));
     }
     else if (r == info.rows.length-1 ){
       if (block.type == "math_arithmetic" || block.type == "logic_operation") {
         this.drawRightParenthesis(row, cursorY);
-      }
-      else if (info.bottomRow.hasNextConnection == true){
-        this.drawBottomRow(row, cursorY);
       }
       else{
         this.drawSpacerRow(row, cursorY);
@@ -253,7 +252,7 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
         }
         else if (rowChild instanceof Blockly.BlockRendering.Icon){
           rowChild.icon.iconGroup_.setAttribute("data-navigation-order", 1000*r+c);
-          rowChild.icon.iconGroup_.setAttribute("aria-label", 'Modifier. ');
+          rowChild.icon.iconGroup_.setAttribute("aria-label", 'Modifier for ' + this.getNestingBlockName(block) + ' block.');
         }
       }
       this.drawRowWithElements(row, cursorY, r);
@@ -316,9 +315,10 @@ Blockly.BlockRendering.Debug.prototype.drawRightParenthesis = function(row, curs
  * Draw a debug rectangle for the bottom spacer row.
  * @param {!Blockly.BlockRendering.Row} row The row to render
  * @param {number} cursorY The y position of the top of the row.
+ * @param {string} desc the name of the block
  * @package
  */
-Blockly.BlockRendering.Debug.prototype.drawBottomRow = function(row, cursorY) {
+Blockly.BlockRendering.Debug.prototype.drawBottomRow = function(row, cursorY, desc) {
   this.debugElements_.push(Blockly.utils.createSvgElement('rect',
       {
         'class': 'rowSpacerRect blockRenderDebug',
@@ -326,7 +326,7 @@ Blockly.BlockRendering.Debug.prototype.drawBottomRow = function(row, cursorY) {
         'y': cursorY,
         'width': row.width,
         'height': row.height,
-        'aria-label': 'End of block.',
+        'aria-label': 'End of ' + (desc == null? '':desc) + ' block.',
         'data-navigation-order': 9999999,
       },
       this.svgRoot_));
@@ -344,10 +344,10 @@ Blockly.BlockRendering.Debug.prototype.grabDesc = function(row){
     switch (row.elements[i].type) {
       case 'field':
         if(row.elements[i].field.textElement_ != null)
-        desc += 'editable text.' + row.elements[i].field.textElement_.textContent + '. ';
+        desc += row.elements[i].field.textElement_.textContent + '. ';
         break;
       case 'icon':
-        desc += 'modifier icon. ';
+        desc += '';
         break;
       case 'external value input':
         desc += row.elements[i].connectedBlock == null? 'blank. ':/*row.elements[i].connectedBlock.type + '. '*/'';
@@ -356,10 +356,31 @@ Blockly.BlockRendering.Debug.prototype.grabDesc = function(row){
         desc += row.elements[i].connectedBlock == null? 'blank. ':/*row.elements[i].connectedBlock.type + '. '*/'';
         break;
       case 'statement input':
-        desc += 'statement. ';
+        var block = row.elements[i].connection.sourceBlock_;
+        desc = 'inside. ' + this.getNestingBlockName(block) + '. ' + desc;
         break;
       default:
     }
   }
   return desc;
 };
+
+Blockly.BlockRendering.Debug.prototype.getNestingBlockName = function(block) {
+  var blockNames = {
+    'controls_if': 'if',
+    'controls_repeat_ext': 'repeat',
+    'controls_forEach': 'for each',
+    'controls_for': 'for',
+    'procedures_defnoreturn': 'function',
+    'procedures_defreturn': 'function',
+    'controls_whileUntil': 'repeat while'
+  }
+  if ((block.type === 'controls_whileUntil'
+      && block.inputList[0].fieldRow[1].getText() === 'until')) {
+    blockNames['controls_whileUntil'] = 'repeat until';
+  }
+  if (blockNames[block.type]) {
+    return blockNames[block.type];
+  }
+  return null;
+}
