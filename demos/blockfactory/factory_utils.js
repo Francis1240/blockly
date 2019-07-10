@@ -330,9 +330,9 @@ FactoryUtils.formatJavaScript_ = function(blockType, rootBlock, workspace) {
   }
   // Generate inline/external switch.
   if (rootBlock.getFieldValue('INLINE') == 'EXT') {
-    code.push('    this.setInputsInline(false);');
-  } else if (rootBlock.getFieldValue('INLINE') == 'INT') {
     code.push('    this.setInputsInline(true);');
+  } else if (rootBlock.getFieldValue('INLINE') == 'INT') {
+    code.push('    this.setInputsInline(false);');
   }
   // Generate output, or next/previous connections.
   switch (rootBlock.getFieldValue('CONNECTIONS')) {

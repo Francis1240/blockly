@@ -150,7 +150,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
       "type": "input_statement",
       "name": "DO"
     }],
-    "inputsInline": true,
+    "inputsInline": false,
     "previousStatement": null,
     "nextStatement": null,
     "style": "loop_blocks",
