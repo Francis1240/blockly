@@ -104,23 +104,31 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerElem = function(elem, cursorX, 
  * @param {!Blockly.BlockSvg.Measurable} elem The element to render
  * @param {number} cursorX The x position of the left of the row.
  * @param {number} centerY The y position of the center of the row, vertically.
+ * @param {number} rowNum The index of the row.
  * @package
  */
-Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY) {
+Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY, rowNum) {
   var yPos = centerY - elem.height / 2;
-  if(elem.field instanceof Blockly.FieldVariable){
+  if (elem.isInput) {
+    var desc = '';
+    switch(elem.connection.type){
+      case 1: desc = 'value input. '
+      break;
+      case 3: desc = 'statement input.'
+      break;
+      default: console.log('Error: wrong connection type');
+    }
     this.debugElements_.push(Blockly.utils.createSvgElement('rect',
        {
-         'class': 'rowRenderingRect blockRenderDebug',
+         'class': 'connectionRect blockRenderDebug',
          'x': cursorX,
          'y': yPos,
          'width': elem.width,
          'height': elem.height,
+         'aria-label': desc,
+         'data-navigation-order': 1000*rowNum+999,
        },
        this.svgRoot_));
-  }
-
-  if (elem.isInput) {
     this.drawConnection(elem.connection);
   }
 };
@@ -203,7 +211,7 @@ Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, curso
     if (elem.isSpacer()) {
       this.drawSpacerElem(elem, cursorX, centerY);
     } else {
-      this.drawRenderedElem(elem, cursorX, centerY);
+      this.drawRenderedElem(elem, cursorX, centerY, rowNum);
     }
     cursorX += elem.width;
   }
@@ -243,8 +251,10 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
     else {
       for (var c = 0; c < row.elements.length; c++) {
         var rowChild = row.elements[c];
-        if (rowChild.connection && rowChild.connection.targetConnection) {
+        if (rowChild.connection) {
+          if (rowChild.connection.targetConnection){
           rowChild.connection.targetConnection.sourceBlock_.svgGroup_.setAttribute("data-navigation-order", 1000*r+c);
+        }
         }
         else if (rowChild.field instanceof Blockly.FieldVariable){
           rowChild.field.fieldGroup_.setAttribute("data-navigation-order", 1000*r+c);
