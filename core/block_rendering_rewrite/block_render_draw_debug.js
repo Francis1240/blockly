@@ -112,9 +112,9 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
   if (elem.isInput) {
     var desc = '';
     switch(elem.connection.type){
-      case 1: desc = 'value input. '
+      case 1: desc = 'value connection. '
       break;
-      case 3: desc = 'statement input.'
+      case 3: desc = 'statement connection.'
       break;
       default: console.log('Error: wrong connection type');
     }
@@ -129,7 +129,7 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
          'data-navigation-order': 1000*rowNum+999,
        },
        this.svgRoot_));
-    this.drawConnection(elem.connection);
+//    this.drawConnection(elem.connection);
   }
 };
 
