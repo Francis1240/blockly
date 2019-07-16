@@ -11,19 +11,10 @@ goog.provide('Blockly.Linearization.BlockJoiner');
  * parent nav and mainNavList.
  *
  * @constructor
- * @param {!Blockly.Workspace} workspace the main workspace to represent
- * @param {HTMLElement} parentNav the p element to display the parent
- * breadcrumbs within
- * @param {HTMLElement} mainNavList the p element to display the main
- * linearization of workspace within
  */
-Blockly.Linearization = function(workspace, parentNav, mainNavList) {
+Blockly.Linearization = function(workspace) {
   this.workspace = workspace;
-  this.parentNav = parentNav;
   this.blockJoiner = new Blockly.Linearization.BlockJoiner();
-  // ***Requires Localization***
-  this.blankText_ = 'NOTHING';
-  workspace.addChangeListener(e => this.generateList_(e));
 }
 
 /**
@@ -142,35 +133,6 @@ Blockly.Linearization.BlockJoiner.prototype.blockIs = function(node) {
     && this.blockNode.getLocation().id === node.getLocation().id;
 };
 
-/**
- * The ChangeListener for workspace events. On fire, fully redraws
- * linearization, including parentNav.
- * @param {?Blockly.Events.Abstract} e undefined by default, the workspace
- * event that triggers this ChangeListener.
- * @private
- */
-Blockly.Linearization.prototype.generateList_ = function(e) {
-  var workspace = this.workspace;
-  if (!workspace.getAllBlocks().length) {
-    this.mainNavList.innerHTML = '';
-    return;
-  }
-
-  if (e) {
-    this.alterSelectedWithEvent_(e);
-  }
-
-  this.generateParentNav_(this.selectedNode);
-
-  var navListDiv = this.mainNavList;
-  var newDiv = this.selectedNode?
-      this.makeNodeList_(this.selectedNode):
-      this.makeWorkspaceList_();
-
-  newDiv.setAttribute('id', 'mainNavList');
-  navListDiv.parentNode.replaceChild(newDiv, navListDiv);
-  this.mainNavList = newDiv;
-}
 
 /**
  * Takes a workspace event and uses the type of event to determine the next
@@ -216,74 +178,6 @@ Blockly.Linearization.prototype.alterSelectedWithEvent_ = function(e) {
   }
 
   this.listItemOnclick(node);
-}
-
-/**
- * Generates (and replaces) the old parent-nav bar, using color-coded, linked
- * breadcrumbs. Always includes workspace.
- * @param {!Blockly.Workspace} Current workspace
- * @param {?Blockly.ASTNode} rooNode Generates breadcrumbs from rootNode's
- * parentStack up to and including rootNode.
- * @private
- */
-Blockly.Linearization.prototype.generateParentNav_ = function(rootNode) {
-  var pNav = this.parentNav;
-  pNav.innerHTML = '';
-  pNav.appendChild(this.makeParentItem_());
-
-  if (rootNode) {
-    rootNode.getParentStack(true)
-        .filter(node => node.getType() === Blockly.ASTNode.types.BLOCK)
-        .reverse()
-        .map(node => this.makeParentItem_(node))
-        .forEach(elem => pNav.appendChild(elem));
-  }
-
-  // add movement options...
-  // ...cancel move item...
-  var blockNode = this.blockJoiner.blockNode;
-  if (this.blockJoiner.connectionNode || blockNode) {
-    pNav.appendChild(document.createElement('br'));
-    var cancelItem = document.createElement('b');
-    // ***Requires Localization***
-    cancelItem.appendChild(document.createTextNode('Cancel Move'));
-    cancelItem.addEventListener('click', e => {
-        if (this.blockJoiner.connectionNode) {
-          this.blockJoiner.connectionNode = null;
-        } else {
-          this.blockJoiner.blockNode = null;
-        }
-        this.generateList_();
-    });
-    pNav.appendChild(cancelItem);
-  }
-
-  // ...delete block item...
-  if (blockNode && !this.selectedNode) {
-    pNav.appendChild(document.createElement('br'));
-    var deleteItem = document.createElement('b');
-    // ***Requires Localization***
-    var text = 'Delete ' + blockNode.getLocation().makeAriaLabel();
-    deleteItem.appendChild(document.createTextNode(text));
-    deleteItem.addEventListener('click', e => {
-      this.blockJoiner.blockNode = null;
-      blockNode.getLocation().dispose(true);
-    })
-
-    // ...make into new stack item
-    if (blockNode.prev()) {
-      // if this has the ability to be mid-stack (unlike hat blocks)
-      pNav.appendChild(deleteItem);
-      pNav.appendChild(document.createElement('br'));
-      var newStackItem = document.createElement('b');
-      // ***Requires Localization***
-      newStackItem.appendChild(document.createTextNode('Start new stack'));
-      newStackItem.addEventListener('click', e => {
-        this.blockJoiner.disconnectBlock();
-      });
-      pNav.appendChild(newStackItem);
-    }
-  }
 }
 
 /**
@@ -1079,7 +973,6 @@ Blockly.Linearization.prototype.makeDropdownItem_ = function(field) {
         offset++;
       }
     }
-    this.generateParentNav_(this.selectedNode);
     Blockly.Events.enable();
   });
   return elem;

@@ -138,7 +138,7 @@ Blockly.ASTNode.createConnectionNode = function(connection) {
   if (connection.type === Blockly.INPUT_VALUE) {
     return Blockly.ASTNode.createInputNode(connection.getParentInput());
   } else if (connection.type === Blockly.NEXT_STATEMENT
-      && connection.getParentInput()) {
+      && connection.parentInput) {
     return Blockly.ASTNode.createInputNode(connection.getParentInput());
   } else if (connection.type === Blockly.NEXT_STATEMENT) {
     return new Blockly.ASTNode(Blockly.ASTNode.types.NEXT, connection);

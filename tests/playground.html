@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>Blockly Playground</title>
 <script src="../blockly_uncompressed.js"></script>
+<script src="../core/ast_node.js"></script>
 <script src="../generators/javascript.js"></script>
 <script src="../generators/javascript/logic.js"></script>
 <script src="../generators/javascript/loops.js"></script>
@@ -65,11 +66,12 @@
 <script src="../blocks/variables_dynamic.js"></script>
 <script src="../blocks/procedures.js"></script>
 <script src="blocks/test_blocks.js"></script>
+<script src="linearization.js"></script>
 
 <script>
 'use strict';
 var workspace = null;
-
+var ln = null;
 function start() {
   setBackgroundColour();
 
@@ -145,9 +147,9 @@ function start() {
     logEvents(false);
   }
   taChange();
-
-  fromXml();
+  ln = new Blockly.Linearization(workspace);
 }
+// Functions to reorder the DOM elements based on their "data-navigation-order"
 var pendingDOMReorderings = new Set();
 function reorderDOM() {
   observer.disconnect();
@@ -164,7 +166,7 @@ function sortChildrenByNavigationOrder(parent) {
   newChildren
     .forEach((elem) => parent.appendChild(elem));
 }
-
+// The MutationObserver object which triggers when the DOM changes.
 var MutationObserver = window.MutationObserver || window.WebKitMutationObserver || window.MozMutationObserver;
 var observer = new MutationObserver(function(mutations){
   mutations.forEach(function(mutation) {
@@ -183,6 +185,7 @@ function connectObserver() {
     subtree: true,
   });
 }
+// connect the MutationObserver when the DOMContentLoaded event is fired.
 window.addEventListener('DOMContentLoaded', connectObserver);
 
 function addToolboxButtonCallbacks() {
