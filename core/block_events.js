@@ -79,6 +79,27 @@ Blockly.Events.BlockBase.prototype.fromJson = function(json) {
 };
 
 /**
+ * Class for a connection event.
+ * @param {Blockly.Block} source The block that contains the connection.
+ * @param {Blockly.Block} target The block to connect to.
+ * @param {Blockly.Connection|Blockly.Input} location The connection to connect to.
+ * @extends {Blockly.Events.BlockBase}
+ * @constructor
+ */
+Blockly.Events.Connect = function(source, target, location) {
+  if (!source||!target||!location) {
+    return;  // Blank event to be populated by fromJson.
+  }
+  Blockly.Events.Connect.superClass_.constructor.call(this, source);
+  this.source = source;
+  this.target = target;
+  this.location = location;
+};
+goog.inherits(Blockly.Events.Connect, Blockly.Events.BlockBase);
+
+
+
+/**
  * Class for a block change event.
  * @param {Blockly.Block} block The changed block.  Null for a blank event.
  * @param {string} element One of 'field', 'comment', 'disabled', etc.

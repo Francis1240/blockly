@@ -127,6 +127,7 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
          'height': elem.height,
          'aria-label': desc,
          'data-navigation-order': 1000*rowNum+999,
+         'onClick': "alert(event)"
        },
        this.svgRoot_));
 //    this.drawConnection(elem.connection);
@@ -336,7 +337,7 @@ Blockly.BlockRendering.Debug.prototype.drawBottomRow = function(row, cursorY, de
         'y': cursorY,
         'width': row.width,
         'height': row.height,
-        'aria-label': 'End of ' + (desc == null? '':desc) + ' block.',
+        'aria-label': 'End of ' + (desc == null ? '' : desc) + ' block.',
         'data-navigation-order': 9999999,
       },
       this.svgRoot_));

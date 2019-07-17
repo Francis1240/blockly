@@ -206,6 +206,7 @@ Blockly.BlockSvg.prototype.select = function() {
   Blockly.Events.fire(event);
   Blockly.selected = this;
   this.addSelect();
+  this.workspace.linearization.blockJoiner.push(Blockly.ASTNode.createBlockNode(this));
 };
 
 /**

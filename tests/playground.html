@@ -71,7 +71,6 @@
 <script>
 'use strict';
 var workspace = null;
-var ln = null;
 function start() {
   setBackgroundColour();
 
@@ -147,7 +146,7 @@ function start() {
     logEvents(false);
   }
   taChange();
-  ln = new Blockly.Linearization(workspace);
+  workspace.linearization = new Blockly.Linearization(workspace);
 }
 // Functions to reorder the DOM elements based on their "data-navigation-order"
 var pendingDOMReorderings = new Set();
@@ -494,7 +493,8 @@ h1 {
 
 .connectionRect {
   stroke: red;
-  fill: none;
+  fill: #fff;
+  fill-opacity: 0;
   stroke-width: 3px;
 }
 

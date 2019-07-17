@@ -50,6 +50,8 @@ Blockly.Workspace = function(opt_options) {
   this.horizontalLayout = !!this.options.horizontalLayout;
   /** @type {number} */
   this.toolboxPosition = this.options.toolboxPosition;
+  /** @type {Blockly.Linearization}*/
+  this.linearization = null;
 
   /**
    * @type {!Array.<!Blockly.Block>}
