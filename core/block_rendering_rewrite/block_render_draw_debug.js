@@ -127,7 +127,7 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
          'height': elem.height,
          'aria-label': desc,
          'data-navigation-order': 1000*rowNum+999,
-         'onClick': "alert(event)"
+         'onclick': "alert('Hey')"
        },
        this.svgRoot_));
 //    this.drawConnection(elem.connection);
@@ -193,6 +193,7 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedRow = function(row, cursorY, 
         'height': row.height,
         'aria-label': this.grabDesc(row),
         'data-navigation-order': 1000*rowNum,
+        'onclick': "logOnConsole()"
       },
       this.svgRoot_));
 };
