@@ -105,11 +105,28 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerElem = function(elem, cursorX, 
  * @param {number} cursorX The x position of the left of the row.
  * @param {number} centerY The y position of the center of the row, vertically.
  * @param {number} rowNum The index of the row.
+ * @param {number} order The index of the element.
  * @package
  */
-Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY, rowNum) {
+Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY, rowNum, order) {
   var yPos = centerY - elem.height / 2;
-  if (elem.isInput) {
+  if(elem instanceof Blockly.BlockRendering.Field && elem.field instanceof Blockly.FieldLabel){
+    this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+       {
+         'class': 'elemRenderingRect blockRenderDebug',
+         'x': cursorX,
+         'y': yPos,
+         'rx':3,
+         'ry':3,
+         'width': elem.width,
+         'height': elem.height,
+         'aria-label': elem.field.text_ + '. ',
+         'data-navigation-order': 1000*rowNum+order+1,
+         'onclick': "alert('Hey')"
+       },
+       this.svgRoot_));
+  }
+  else if (elem.isInput) {
     var desc = '';
     switch(elem.connection.type){
       case 1: desc = 'value connection. '
@@ -118,18 +135,38 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
       break;
       default: console.log('Error: wrong connection type');
     }
+    console.log(elem)
+    if (elem.connection.targetConnection && elem.connection.targetConnection.sourceBlock_ && elem.connection.targetConnection.sourceBlock_.type == "math_number"){
+      elem.connection.targetConnection.sourceBlock_.svgGroup_.setAttribute("aria-label", elem.connection.targetConnection.sourceBlock_.inputList[0].fieldRow[0].value_)
+    }
     this.debugElements_.push(Blockly.utils.createSvgElement('rect',
        {
          'class': 'connectionRect blockRenderDebug',
          'x': cursorX,
          'y': yPos,
+         'rx':3,
+         'ry':3,
          'width': elem.width,
          'height': elem.height,
-         'aria-label': "end of "+desc,
-         'data-navigation-order': 1000*rowNum+999,
+         'aria-label': 'End of ' + desc,
+         'data-navigation-order': 1000*rowNum+order+0.5,
          'onclick': "alert('Hey')"
        },
        this.svgRoot_));
+       this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+          {
+            'class': 'connectionRect blockRenderDebug',
+            'x': cursorX,
+            'y': yPos,
+            'rx':3,
+            'ry':3,
+            'width': elem.width,
+            'height': elem.height,
+            'aria-label': 'Start of ' + desc,
+            'data-navigation-order': 1000*rowNum+order-0.5,
+            'onclick': "alert('Hey')"
+          },
+          this.svgRoot_));
 //    this.drawConnection(elem.connection);
   }
 };
@@ -191,9 +228,8 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedRow = function(row, cursorY, 
         'y': cursorY ,
         'width': row.width,
         'height': row.height,
-        'aria-label': this.grabDesc(row),
+//        'aria-label': this.grabDesc(row),
         'data-navigation-order': 1000*rowNum,
-        'onclick': "logOnConsole()"
       },
       this.svgRoot_));
 };
@@ -213,7 +249,7 @@ Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, curso
     if (elem.isSpacer()) {
       this.drawSpacerElem(elem, cursorX, centerY);
     } else {
-      this.drawRenderedElem(elem, cursorX, centerY, rowNum);
+      this.drawRenderedElem(elem, cursorX, centerY, rowNum, e);
     }
     cursorX += elem.width;
   }
