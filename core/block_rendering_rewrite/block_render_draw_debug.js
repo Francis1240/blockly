@@ -125,7 +125,7 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
          'y': yPos,
          'width': elem.width,
          'height': elem.height,
-         'aria-label': desc,
+         'aria-label': "end of "+desc,
          'data-navigation-order': 1000*rowNum+999,
          'onclick': "alert('Hey')"
        },
