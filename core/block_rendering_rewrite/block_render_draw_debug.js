@@ -112,19 +112,21 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
   var yPos = centerY - elem.height / 2;
   console.log(elem)
   if(elem instanceof Blockly.BlockRendering.Field && elem.field instanceof Blockly.FieldLabel){
-    this.debugElements_.push(Blockly.utils.createSvgElement('rect',
-       {
-         'class': 'elemRenderingRect blockRenderDebug',
-         'x': cursorX,
-         'y': yPos,
-         'rx':3,
-         'ry':3,
-         'width': elem.width,
-         'height': elem.height,
-         'aria-label': elem.field.text_ + '. ',
-         'data-navigation-order': 1000*rowNum+order+1,
-       },
-       this.svgRoot_));
+    if (elem.field.text_){
+      this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+         {
+           'class': 'elemRenderingRect blockRenderDebug',
+           'x': cursorX,
+           'y': yPos,
+           'rx':3,
+           'ry':3,
+           'width': elem.width,
+           'height': elem.height,
+           'aria-label': elem.field.text_ + '. ',
+           'data-navigation-order': 1000*rowNum+order+1,
+         },
+         this.svgRoot_));
+    }
   }
   else if(elem instanceof Blockly.BlockRendering.Field && (elem.field instanceof Blockly.FieldVariable || elem.field instanceof Blockly.FieldDropdown)){
     this.debugElements_.push(Blockly.utils.createSvgElement('rect',
@@ -154,33 +156,29 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
     if (elem.connection.targetConnection && elem.connection.targetConnection.sourceBlock_ && elem.connection.targetConnection.sourceBlock_.type == "math_number"){
       elem.connection.targetConnection.sourceBlock_.svgGroup_.setAttribute("aria-label", elem.connection.targetConnection.sourceBlock_.inputList[0].fieldRow[0].value_)
     }
-    this.debugElements_.push(Blockly.utils.createSvgElement('rect',
-       {
-         'class': 'connectionRect blockRenderDebug',
-         'x': cursorX,
-         'y': yPos,
-         'rx':3,
-         'ry':3,
-         'width': elem.width,
-         'height': elem.height,
-         'aria-label': 'End of ' + desc,
-         'data-navigation-order': 1000*rowNum+order+0.5,
-       },
-       this.svgRoot_));
-       this.debugElements_.push(Blockly.utils.createSvgElement('rect',
-          {
-            'class': 'connectionRect blockRenderDebug',
-            'x': cursorX,
-            'y': yPos,
-            'rx':3,
-            'ry':3,
-            'width': elem.width,
-            'height': elem.height,
-            'aria-label': 'Start of ' + desc,
-            'data-navigation-order': 1000*rowNum+order-0.5,
-            'onclick': "alert('Hey')"
-          },
-          this.svgRoot_));
+    this.debugElements_.push(Blockly.utils.createSvgElement('rect',{
+        'class': 'connectionRect blockRenderDebug',
+        'x': cursorX,
+        'y': yPos,
+        'rx':3,
+        'ry':3,
+        'width': elem.width,
+        'height': elem.height,
+        'aria-label': 'Start of ' + desc,
+        'data-navigation-order': 1000*rowNum+order-0.5,
+      }, this.svgRoot_));
+    this.debugElements_.push(Blockly.utils.createSvgElement('rect',{
+           'class': 'connectionRect blockRenderDebug',
+           'x': cursorX,
+           'y': yPos,
+           'rx':3,
+           'ry':3,
+           'width': elem.width,
+           'height': elem.height,
+           'aria-label': 'End of ' + desc,
+           'data-navigation-order': 1000*rowNum+order+0.5,
+         },
+         this.svgRoot_));
 //    this.drawConnection(elem.connection);
   }
 };
@@ -315,6 +313,7 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
         else if (rowChild instanceof Blockly.BlockRendering.Icon){
           rowChild.icon.iconGroup_.setAttribute("data-navigation-order", 1000*r+c);
           rowChild.icon.iconGroup_.setAttribute("aria-label", 'Modifier for ' + this.getNestingBlockName(block) + ' block.');
+          rowChild.icon.iconGroup_.setAttribute("role", 'button');
         }
       }
       this.drawRowWithElements(row, cursorY, r);
