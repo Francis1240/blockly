@@ -110,6 +110,7 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerElem = function(elem, cursorX, 
  */
 Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY, rowNum, order) {
   var yPos = centerY - elem.height / 2;
+  console.log(elem)
   if(elem instanceof Blockly.BlockRendering.Field && elem.field instanceof Blockly.FieldLabel){
     this.debugElements_.push(Blockly.utils.createSvgElement('rect',
        {
@@ -122,7 +123,22 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
          'height': elem.height,
          'aria-label': elem.field.text_ + '. ',
          'data-navigation-order': 1000*rowNum+order+1,
-         'onclick': "alert('Hey')"
+       },
+       this.svgRoot_));
+  }
+  else if(elem instanceof Blockly.BlockRendering.Field && (elem.field instanceof Blockly.FieldVariable || elem.field instanceof Blockly.FieldDropdown)){
+    this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+       {
+         'class': 'elemRenderingRect blockRenderDebug',
+         'x': cursorX,
+         'y': yPos,
+         'rx':3,
+         'ry':3,
+         'width': elem.width,
+         'height': elem.height,
+         'aria-label': 'editable droplist.' + elem.field.text_ + '. ',
+         'role': 'input',
+         'data-navigation-order': 1000*rowNum+order+1,
        },
        this.svgRoot_));
   }
@@ -135,7 +151,6 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
       break;
       default: console.log('Error: wrong connection type');
     }
-    console.log(elem)
     if (elem.connection.targetConnection && elem.connection.targetConnection.sourceBlock_ && elem.connection.targetConnection.sourceBlock_.type == "math_number"){
       elem.connection.targetConnection.sourceBlock_.svgGroup_.setAttribute("aria-label", elem.connection.targetConnection.sourceBlock_.inputList[0].fieldRow[0].value_)
     }
@@ -150,7 +165,6 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
          'height': elem.height,
          'aria-label': 'End of ' + desc,
          'data-navigation-order': 1000*rowNum+order+0.5,
-         'onclick': "alert('Hey')"
        },
        this.svgRoot_));
        this.debugElements_.push(Blockly.utils.createSvgElement('rect',
