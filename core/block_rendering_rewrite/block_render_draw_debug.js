@@ -113,24 +113,7 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerElem = function(elem, cursorX, 
  */
 Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY, rowNum, order, row) {
   var yPos = centerY - elem.height / 2;
-  if(elem instanceof Blockly.BlockRendering.Field && elem.field instanceof Blockly.FieldLabel){
-    if (elem.field.text_){
-      this.debugElements_.push(Blockly.utils.createSvgElement('rect',
-         {
-           'class': 'elemRenderingRect blockRenderDebug',
-           'x': cursorX-6,
-           'y': yPos-0.5*(row.height-elem.height),
-           'rx':3,
-           'ry':3,
-           'width': elem.width+12,
-           'height': row.height,
-           'aria-label': elem.field.text_ + '. ',
-           'data-navigation-order': 1000*rowNum+order+1,
-         },
-         this.svgRoot_));
-    }
-  }
-  else if(elem instanceof Blockly.BlockRendering.Field && (elem.field instanceof Blockly.FieldVariable || elem.field instanceof Blockly.FieldDropdown)){
+  if(elem instanceof Blockly.BlockRendering.Field && (elem.field instanceof Blockly.FieldVariable || elem.field instanceof Blockly.FieldDropdown || (elem.field instanceof Blockly.FieldLabel && elem.field.text_))){
     this.debugElements_.push(Blockly.utils.createSvgElement('rect',
        {
          'class': 'elemRenderingRect blockRenderDebug',
@@ -142,6 +125,21 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
          'height': row.height,
          'aria-label': elem.field.text_ + '. editable droplist.' ,
          'role': 'input',
+         'data-navigation-order': 1000*rowNum+order+1,
+       },
+       this.svgRoot_));
+  }
+  else if(elem instanceof Blockly.BlockRendering.Field && elem.field instanceof Blockly.FieldNumber ){
+    this.debugElements_.push(Blockly.utils.createSvgElement('rect',
+       {
+         'class': 'elemRenderingRect blockRenderDebug',
+         'x': cursorX-6,
+         'y': yPos-0.5*(row.height-elem.height),
+         'rx':3,
+         'ry':3,
+         'width': elem.width+12,
+         'height': row.height,
+         'aria-label': elem.field.text_ + '. editable number.' ,
          'data-navigation-order': 1000*rowNum+order+1,
        },
        this.svgRoot_));
@@ -310,7 +308,7 @@ Blockly.BlockRendering.Debug.prototype.drawDebug = function(block, info) {
         }
         else if (rowChild.field instanceof Blockly.FieldVariable){
           rowChild.field.fieldGroup_.setAttribute("data-navigation-order", 1000*r+c);
-          rowChild.field.fieldGroup_.setAttribute("aria-label", 'editable droplist. '+rowChild.field.text_ +'. ');
+          // rowChild.field.fieldGroup_.setAttribute("aria-label", 'editable droplist. '+rowChild.field.text_ +'. ');
         }
         else if (rowChild instanceof Blockly.BlockRendering.Icon){
           rowChild.icon.iconGroup_.setAttribute("data-navigation-order", 1000*r+c);
