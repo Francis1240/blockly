@@ -108,7 +108,7 @@ Blockly.Blocks['unittest_adjustindex'] = {
           "check": "Number"
         }
       ],
-      "inputsInline": false,
+      "inputsInline": true,
       "output": "Number",
       "colour": 65,
       "tooltip": "Adjusts the value based on whether generated code is using " +

@@ -86,7 +86,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "check": "Number"
       }
     ],
-    "inputsInline": false,
+    "inputsInline": true,
     "output": "Number",
     "style": "math_blocks",
     "helpUrl": "%{BKY_MATH_ARITHMETIC_HELPURL}",
@@ -201,7 +201,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         ]
       }
     ],
-    "inputsInline": false,
+    "inputsInline": true,
     "output": "Boolean",
     "style": "math_blocks",
     "tooltip": "%{BKY_MATH_IS_TOOLTIP}",
@@ -306,7 +306,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "check": "Number"
       }
     ],
-    "inputsInline": false,
+    "inputsInline": true,
     "output": "Number",
     "style": "math_blocks",
     "tooltip": "%{BKY_MATH_MODULO_TOOLTIP}",
@@ -334,7 +334,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "check": "Number"
       }
     ],
-    "inputsInline": false,
+    "inputsInline": true,
     "output": "Number",
     "style": "math_blocks",
     "tooltip": "%{BKY_MATH_CONSTRAIN_TOOLTIP}",
@@ -357,7 +357,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "check": "Number"
       }
     ],
-    "inputsInline": false,
+    "inputsInline": true,
     "output": "Number",
     "style": "math_blocks",
     "tooltip": "%{BKY_MATH_RANDOM_INT_TOOLTIP}",
@@ -390,7 +390,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
         "check": "Number"
       }
     ],
-    "inputsInline": false,
+    "inputsInline": true,
     "output": "Number",
     "style": "math_blocks",
     "tooltip": "%{BKY_MATH_ATAN2_TOOLTIP}",

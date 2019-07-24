@@ -71,10 +71,12 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerRow = function(row, cursorY) {
   this.debugElements_.push(Blockly.utils.createSvgElement('rect',
       {
         'class': 'rowSpacerRect blockRenderDebug',
-        'x': 1,
-        'y': cursorY+1,
-        'width': row.width-2,
-        'height': row.height-2,
+        'x': 0,
+        'y': cursorY,
+        'rx':3,
+        'ry':3,
+        'width': row.width,
+        'height': row.height,
       },
       this.svgRoot_));
 };
@@ -106,22 +108,22 @@ Blockly.BlockRendering.Debug.prototype.drawSpacerElem = function(elem, cursorX, 
  * @param {number} centerY The y position of the center of the row, vertically.
  * @param {number} rowNum The index of the row.
  * @param {number} order The index of the element.
+ * @param {!Blockly.BlockSvg.Row} row The row to render
  * @package
  */
-Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY, rowNum, order) {
+Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX, centerY, rowNum, order, row) {
   var yPos = centerY - elem.height / 2;
-  console.log(elem)
   if(elem instanceof Blockly.BlockRendering.Field && elem.field instanceof Blockly.FieldLabel){
     if (elem.field.text_){
       this.debugElements_.push(Blockly.utils.createSvgElement('rect',
          {
            'class': 'elemRenderingRect blockRenderDebug',
-           'x': cursorX,
-           'y': yPos,
+           'x': cursorX-6,
+           'y': yPos-0.5*(row.height-elem.height),
            'rx':3,
            'ry':3,
-           'width': elem.width,
-           'height': elem.height,
+           'width': elem.width+12,
+           'height': row.height,
            'aria-label': elem.field.text_ + '. ',
            'data-navigation-order': 1000*rowNum+order+1,
          },
@@ -132,12 +134,12 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
     this.debugElements_.push(Blockly.utils.createSvgElement('rect',
        {
          'class': 'elemRenderingRect blockRenderDebug',
-         'x': cursorX,
-         'y': yPos,
+         'x': cursorX-6,
+         'y': yPos-0.5*(row.height-elem.height),
          'rx':3,
          'ry':3,
-         'width': elem.width,
-         'height': elem.height,
+         'width': elem.width+12,
+         'height': row.height,
          'aria-label': elem.field.text_ + '. editable droplist.' ,
          'role': 'input',
          'data-navigation-order': 1000*rowNum+order+1,
@@ -157,17 +159,6 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
       elem.connection.targetConnection.sourceBlock_.svgGroup_.setAttribute("aria-label", elem.connection.targetConnection.sourceBlock_.inputList[0].fieldRow[0].value_)
     }
     this.debugElements_.push(Blockly.utils.createSvgElement('rect',{
-        'class': 'connectionRect blockRenderDebug',
-        'x': cursorX,
-        'y': yPos,
-        'rx':3,
-        'ry':3,
-        'width': elem.width,
-        'height': elem.height,
-        'aria-label': 'Start of ' + desc,
-        'data-navigation-order': 1000*rowNum+order-0.5,
-      }, this.svgRoot_));
-    this.debugElements_.push(Blockly.utils.createSvgElement('rect',{
            'class': 'connectionRect blockRenderDebug',
            'x': cursorX,
            'y': yPos,
@@ -179,6 +170,17 @@ Blockly.BlockRendering.Debug.prototype.drawRenderedElem = function(elem, cursorX
            'data-navigation-order': 1000*rowNum+order+0.5,
          },
          this.svgRoot_));
+    this.debugElements_.push(Blockly.utils.createSvgElement('rect',{
+        'class': 'connectionRect blockRenderDebug',
+        'x': cursorX,
+        'y': yPos,
+        'rx':3,
+        'ry':3,
+        'width': elem.width,
+        'height': elem.height,
+        'aria-label': 'Start of ' + desc,
+        'data-navigation-order': 1000*rowNum+order-0.5,
+      }, this.svgRoot_));
 //    this.drawConnection(elem.connection);
   }
 };
@@ -261,7 +263,7 @@ Blockly.BlockRendering.Debug.prototype.drawRowWithElements = function(row, curso
     if (elem.isSpacer()) {
       this.drawSpacerElem(elem, cursorX, centerY);
     } else {
-      this.drawRenderedElem(elem, cursorX, centerY, rowNum, e);
+      this.drawRenderedElem(elem, cursorX, centerY, rowNum, e, row);
     }
     cursorX += elem.width;
   }

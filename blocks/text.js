@@ -199,7 +199,7 @@ Blockly.defineBlocksWithJsonArray([  // BEGIN JSON EXTRACT
     "output": "String",
     "style": "text_blocks",
     "helpUrl": "%{BKY_TEXT_CHARAT_HELPURL}",
-    "inputsInline": false,
+    "inputsInline": true,
     "mutator": "text_charAt_mutator"
   }
 ]);  // END JSON EXTRACT (Do not delete this comment.)
@@ -495,7 +495,7 @@ Blockly.Blocks['text_count'] = {
         }
       ],
       "output": "Number",
-      "inputsInline": false,
+      "inputsInline": true,
       "style": "text_blocks",
       "tooltip": Blockly.Msg['TEXT_COUNT_TOOLTIP'],
       "helpUrl": Blockly.Msg['TEXT_COUNT_HELPURL']
@@ -529,7 +529,7 @@ Blockly.Blocks['text_replace'] = {
         }
       ],
       "output": "String",
-      "inputsInline": false,
+      "inputsInline": true,
       "style": "text_blocks",
       "tooltip": Blockly.Msg['TEXT_REPLACE_TOOLTIP'],
       "helpUrl": Blockly.Msg['TEXT_REPLACE_HELPURL']
@@ -553,7 +553,7 @@ Blockly.Blocks['text_reverse'] = {
         }
       ],
       "output": "String",
-      "inputsInline": false,
+      "inputsInline": true,
       "style": "text_blocks",
       "tooltip": Blockly.Msg['TEXT_REVERSE_TOOLTIP'],
       "helpUrl": Blockly.Msg['TEXT_REVERSE_HELPURL']
